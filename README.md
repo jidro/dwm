@@ -18,7 +18,7 @@ Ubuntu Forum为本人从Ubuntu论坛中直接下载下来的大神的配置文�
 dwm-maker for my own DWM, DMENU, ST configuration.    
 It can be installed with one click using install.sh from the terminal.    
 After installation, DWM, dmenu and st configuration files will be placed in ~/. DWM folder, which can be modified by yourself.    
-Ubuntu Forum is a configuration file that I downloaded directly from Ubuntu Forum. <kbd> [reading] (https://forum.ubuntu.org.cn/viewtopic.php?f=95&t=190788) </kbd>    
+Ubuntu Forum is a configuration file that I downloaded directly from Ubuntu Forum. <kbd> [reading](https://forum.ubuntu.org.cn/viewtopic.php?f=95&t=190788)</kbd>    
 This is for my learning use.    
 This provides for your website or computer caused serious consequences of the site is not responsible.    
 This system is for personal use only, any organization or individual is prohibited to use this system for commercial purposes!    
