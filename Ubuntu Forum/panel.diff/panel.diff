@@ -1,0 +1,85 @@
+diff -r ee12ffbf93df dwm.c
+--- a/dwm.c	Tue Mar 17 19:53:00 2009 +0000
++++ b/dwm.c	Thu Mar 19 09:36:38 2009 +0800
+@@ -233,6 +233,7 @@
+ static Client *clients = NULL;
+ static Client *sel = NULL;
+ static Client *stack = NULL;
++static Client *panel = NULL;
+ static Cursor cursor[CurLast];
+ static Display *dpy;
+ static DC dc;
+@@ -268,7 +269,8 @@
+ 		if(ch.res_name)
+ 			XFree(ch.res_name);
+ 	}
+-	c->tags = c->tags & TAGMASK ? c->tags & TAGMASK : tagset[seltags];
++	if(!c->tags && panel != c)
++		c->tags = c->tags & TAGMASK ? c->tags & TAGMASK : tagset[seltags];
+ }
+ 
+ Bool
+@@ -581,8 +583,12 @@
+ 	}
+ 	else
+ 		x = dc.x;
++   	if(panel) {
++	    dc.x = sw - panel->w;
++	    resize(panel, dc.x, 0, 0, 0);
++   	}
+ 	dc.w = TEXTW(stext);
+-	dc.x = ww - dc.w;
++	dc.x -= dc.w;
+ 	if(dc.x < x) {
+ 		dc.x = x;
+ 		dc.w = ww - x;
+@@ -797,7 +803,7 @@
+ 		unsigned int i, j;
+ 		unsigned int modifiers[] = { 0, LockMask, numlockmask, numlockmask|LockMask };
+ 		XUngrabButton(dpy, AnyButton, AnyModifier, c->win);
+-		if(focused) {
++		if(focused || panel == c) {
+ 			for(i = 0; i < LENGTH(buttons); i++)
+ 				if(buttons[i].click == ClkClientWin)
+ 					for(j = 0; j < LENGTH(modifiers); j++)
+@@ -944,6 +950,12 @@
+ 		c->bw = borderpx;
+ 	}
+ 
++	updatetitle(c);
++	if(strstr(c->name, "panel")) {
++		panel = c;
++		c->bw = 0;
++	}
++
+ 	wc.border_width = c->bw;
+ 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
+ 	XSetWindowBorder(dpy, w, dc.norm[ColBorder]);
+@@ -964,7 +976,8 @@
+ 		XRaiseWindow(dpy, c->win);
+ 	attach(c);
+ 	attachstack(c);
+-	XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
++	if(panel != c)
++	    XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
+ 	XMapWindow(dpy, c->win);
+ 	setclientstate(c, NormalState);
+ 	arrange();
+@@ -1339,7 +1352,7 @@
+ 			resize(c, c->x, c->y, c->w, c->h);
+ 		showhide(c->snext, ntiled);
+ 	}
+-	else { /* hide clients bottom up */
++	else if (panel != c) { /* hide clients bottom up, but do not hide panel */
+ 		showhide(c->snext, ntiled);
+ 		XMoveWindow(dpy, c->win, c->x + 2 * sw, c->y);
+ 	}
+@@ -1464,6 +1477,8 @@
+ unmanage(Client *c) {
+ 	XWindowChanges wc;
+ 
++	if(panel == c)
++		panel = NULL;
+ 	wc.border_width = c->oldbw;
+ 	/* The server grab construct avoids race conditions. */
+ 	XGrabServer(dpy);
