@@ -18,11 +18,16 @@ cat ~/.xsession .xsession > temp
 cat temp > ~/.xsession
 rm -rf temp
 
-cd dmenu
+mkdir ~/.dwm
+
+cp dmenu ~/.dwm
+cd ~/dwm/dmenu
 sudo make clean install
 
-cd st
+cp st ~/.dwm
+cd ~/.dwm/st
 sudo make clean install
 
-cd dwm
+cp dwm ~/.dwm
+cd ~/.dwm/dwm
 sudo make clean install
