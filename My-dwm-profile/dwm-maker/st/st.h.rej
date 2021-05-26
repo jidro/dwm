@@ -1,10 +1,7 @@
 --- st.h
 +++ st.h
-@@ -89,6 +89,7 @@ void sendbreak(const Arg *);
- void toggleprinter(const Arg *);
- 
- int tattrset(int);
-+int tisaltscr(void);
- void tnew(int, int);
- void tresize(int, int);
- void tsetdirtattr(int);
+@@ -123,3 +124,4 @@ extern char *termname;
+ extern unsigned int tabspaces;
+ extern unsigned int defaultfg;
+ extern unsigned int defaultbg;
++extern float alpha, alphaUnfocused;
