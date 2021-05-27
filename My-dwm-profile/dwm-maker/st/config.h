@@ -99,7 +99,7 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* bg opacity */
-float alpha = 0.82;
+float alpha = 0.65;
 
 /* bg opacity */
 /* float alpha = 0.8;  */
@@ -131,7 +131,9 @@ static const char *colorname[] = {
   [257] = "#f8f8f2", /* foreground */
 
   /* more colors can be added after 255 to use with DefaultXX */
-  "black",
+/*  "black",  */
+    "#000000",
+    "#166413",
 
 };
 
