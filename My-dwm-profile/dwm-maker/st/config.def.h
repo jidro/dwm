@@ -135,7 +135,12 @@ static const char *colorname[] = {
   [257] = "#f8f8f2", /* foreground */
 
   /* more colors can be added after 255 to use with DefaultXX */
-  "black",
+/*  "black", */
+    "#000000",
+    "#166413",
+    "#A9CBFF",
+    "#FCE4E3",
+    "#FAAD1A",
 
 };
 
@@ -165,7 +170,8 @@ unsigned int defaultunderline = 7;
  * 4: Underline ("_")
  * 6: Bar ("|")
  * 7: Snowman ("☃")
- */
+*/
+
 static unsigned int cursorshape = 2;
 static unsigned int cursorstyle = 1;
 

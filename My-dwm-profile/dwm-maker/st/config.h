@@ -164,7 +164,8 @@ unsigned int defaultunderline = 7;
  * 4: Underline ("_")
  * 6: Bar ("|")
  * 7: Snowman ("☃")
- */
+*/
+
 static unsigned int cursorshape = 2;
 static unsigned int cursorstyle = 1;
 
