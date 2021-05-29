@@ -1,18 +1,34 @@
 #!/bin/env bash
 
-sudo apt install libx11-dev libxft-dev libxinerama-dev make cmake -y
-
-sudo pacman -S libx11-dev libxft-dev libxinerama-dev make cmake -y
-
-sudo dnf install libx11-dev libxft-dev libxinerama-dev make cmake -y
-
-sudo yun install libx11-dev libxft-dev libxinerama-dev make cmake -y
-
-sudo zypper install libx11-dev libxft-dev libxinerama-dev make cmake -y
-
-sudo eopkg install libx11-dev libxft-dev libxinerama-dev make cmake -y
-
-sudo xbps-install libx11-dev libxft-dev libxinerama-dev make cmake -y
+if [ $(ls /bin/apt-get) = /bin/apt-get ];then
+sudo apt-get install libx11-dev libxft-dev libxinerama-dev make cmake compton -y
+else
+ if [ $(ls /bin/pacman) = /bin/pacman ];then
+ sudo pacman -S libx11-dev libxft-dev libxinerama-dev make cmake compton -y
+ else
+  if [ $(ls /bin/dnf) = /bin/dnf ];then
+  sudo dnf install libx11-dev libxft-dev libxinerama-dev make cmake compton -y
+  else
+   if [ $(ls /bin/yum) = /bin/yum ];then
+   sudo yum install libx11-dev libxft-dev libxinerama-dev make cmake compton -y
+   else
+    if [ $(ls /bin/zypper) = /bin/zypper ];then
+    sudo zypper install libx11-dev libxft-dev libxinerama-dev make cmake compton -y
+    else
+     if [ $(ls /bin/eopkg) = /bin/eopkg ];then
+     sudo eopkg install libx11-dev libxft-dev libxinerama-dev make cmake compton -y
+     else
+      if [ $(ls /bin/xbps-install) = /bin/xbps-install ];then
+      sudo xbps-install libx11-dev libxft-dev libxinerama-dev make cmake compton -y
+      else
+      echo "An Unknown Error"
+      fi
+     fi
+    fi
+   fi
+  fi
+ fi
+fi
 
 cat ~/.xsession .xsession > temp
 cat temp > ~/.xsession
