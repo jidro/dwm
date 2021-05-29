@@ -107,14 +107,14 @@ float alpha = 0.65;
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
   /* 8 normal colors */
-  [0] = "#000000", /* black   */
-  [1] = "#ff0000", /* red     */
-  [2] = "#33ff00", /* green   */
-  [3] = "#ff0099", /* yellow  */
-  [4] = "#0066ff", /* blue    */
-  [5] = "#cc00ff", /* magenta */
-  [6] = "#00ffff", /* cyan    */
-  [7] = "#d0d0d0", /* white   */
+  [0] = "#282a2e", /* black   */
+  [1] = "#a54242", /* red     */
+  [2] = "#8c9440", /* green   */
+  [3] = "#de935f", /* yellow  */
+  [4] = "#5f819d", /* blue    */
+  [5] = "#85678f", /* magenta */
+  [6] = "#5e8d87", /* cyan    */
+  [7] = "#707880", /* white   */
 
   /* 8 bright colors */
   [8]  = "#969896", /* black   */
@@ -123,7 +123,7 @@ static const char *colorname[] = {
   [11] = "#fba922", /* yellow  */
   [12] = "#3971ed", /* blue    */
   [13] = "#a36ac7", /* magenta */
-  [14] = "#3971ed", /* cyan    */
+  [14] = "#8abeb7", /* cyan    */
   [15] = "#ffffff", /* white   */
 
   /* special colors */
@@ -146,9 +146,10 @@ static const char *colorname[] = {
  * foreground, background, cursor, reverse cursor
  */
 unsigned int defaultfg = 257;
-unsigned int defaultbg = 258;
+unsigned int defaultbg = 256;
 static unsigned int defaultcs = 257;
 static unsigned int defaultrcs = 257;
+unsigned int bg = 17, bgUnfocused = 16;
 
 /*
  * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h4-Functions-using-CSI-_-ordered-by-the-final-charact$
