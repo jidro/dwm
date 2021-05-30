@@ -20,6 +20,9 @@ rm -rf temp
 
 mkdir ~/.dwm
 
+cp scripts/autostart.sh ~/.dwm
+cp scripts/dwm-autostart/ ~/.dwm
+
 cp dmenu ~/.dwm
 cd ~/dwm/dmenu
 sudo make clean install
