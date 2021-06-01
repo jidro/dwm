@@ -1,5 +1,11 @@
 #!/bin/env bash
-/bin/bash ~/.dwm/dwm-autostart/scripts.sh &
+
+while /bin/bash ~/Downloads/all.sh
+do
+       sleep
+done &
+
+#/bin/bash ~/Downloads/all.sh &
 
 compton &
 
