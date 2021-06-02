@@ -1,18 +1,18 @@
 #!/bin/env bash
 
-sudo apt install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi -y
+sudo apt install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
 
-sudo pacman -S libx11-dev libxft-dev libxinerama-dev make cmake feh acpi -y
+sudo pacman -S libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
 
-sudo dnf install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi -y
+sudo dnf install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
 
-sudo yun install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi -y
+sudo yun install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
 
-sudo zypper install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi -y
+sudo zypper install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
 
-sudo eopkg install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi -y
+sudo eopkg install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
 
-sudo xbps-install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi -y
+sudo xbps-install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
 
 cat ~/.xsession .xsession > temp
 cat temp > ~/.xsession
