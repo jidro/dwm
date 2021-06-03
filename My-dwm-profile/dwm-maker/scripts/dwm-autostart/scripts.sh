@@ -39,9 +39,11 @@ print_bcapacity(){
 
 print_bstatus(){
 	if [ `upower -i $(upower -e |grep BAT) |grep state |awk '{print $2}'` = discharging ];then
-	 echo "🔋"
+	 echo "〢"
 	elif [ `upower -i $(upower -e |grep BAT) |grep state |awk '{print $2}'` = charging ];then
 	 echo "⚡"
+	elif [ `upower -i $(upower -e |grep BAT) |grep state |awk '{print $2}'` = fully-charged ];then
+	 echo "▇"
 	 else
 	 exit 0
 	fi
