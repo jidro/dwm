@@ -1,67 +1,88 @@
 /* See LICENSE file for copyright and license details. */
 
+/* Constants */
+#define TERMINAL "st"
+#define TERMCLASS "St"
+
 /* appearance */
-static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int snap      = 32;       /* snap pixel */
+static const unsigned int borderpx 	 = 3;        /* border pixel of windows */
+static const unsigned int snap     	 = 32;       /* snap pixel */
 static const unsigned int systraypinning = 0;
 static const unsigned int systrayspacing = 2;
 static const int systraypinningfailfirst = 1;
-static const int showsystray        = 1;
-static const unsigned int gappih    = 10;
-static const unsigned int gappiv    = 10;
-static const unsigned int gappoh    = 10;
-static const unsigned int gappov    = 10;
-static const int smartgaps          = 1;
-static const int showbar            = 1;
-static const int topbar             = 1;
-static const Bool viewontag         = True;
-static const char *fonts[]          = { "monospace:size=10" };
-static const char dmenufont[]       = "monospace:size=10";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#ffffff";
-static const char col_cyan[]        = "#303133";
-static const char col_border[]      = "#42A5F5";
-static const unsigned int baralpha  = 0xd0;
-static const unsigned int borderalpha = OPAQUE;
-static const char *colors[][3]      = {
+static const int showsystray       	 = 1;
+static const unsigned int gappih   	 = 5;
+static const unsigned int gappiv   	 = 5;
+static const unsigned int gappoh   	 = 5;
+static const unsigned int gappov   	 = 5;
+static const int swallowfloating   	 = 0;        /* 1 means swallow floating windows by default */
+static const int smartgaps         	 = 0;        /* 1 means no outer gap when there is only one window */
+static const int showbar           	 = 1;
+static const int topbar            	 = 1;
+static const Bool viewontag        	 = True;
+static const char *fonts[]         	 = { "monospace:size=10" };
+static const char dmenufont[]      	 = "monospace:size=10";
+static const char col_gray1[]      	 = "#222222";
+static const char col_gray2[]      	 = "#444444";
+static const char col_gray3[]      	 = "#bbbbbb";
+static const char col_gray4[]      	 = "#ffffff";
+static const char col_cyan[]       	 = "#303133";
+static const char col_border[]     	 = "#42A5F5";
+static const unsigned int baralpha 	 = 0xd0;
+static const unsigned int borderalpha	 = OPAQUE;
+static const char *colors[][3]    	 = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
         [SchemeHid]  = { col_cyan,  col_gray1, col_cyan  },
 };
-static const unsigned int alphas[][3]      = {
+static const unsigned int alphas[][3]    = {
         /*               fg      bg        border     */
         [SchemeNorm] = { OPAQUE, baralpha, borderalpha },
         [SchemeSel]  = { OPAQUE, baralpha, borderalpha },
 };
 
+typedef struct {
+        const char *name;
+        const void *cmd;
+} Sp;
+const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=16", "-g", "50x20", "-e", "bc", "-lq", NULL };
+
 /* tagging */
-static const char *tags[] = { "I", "II",  "III", "IV", "V", "VI", "VII", "VIII", "IX" };
+//static const char *tags[] = { "I", "II",  "III", "IV", "V", "VI", "VII", "VIII", "IX" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* class     	 instance   	 title      	 tags mask     isfloating   monitor	 */
+	{ "Gimp",    	 NULL,      	 NULL,      	 0,            1,           -1		 },
+	{ "Firefox", 	 NULL,      	 NULL,      	 1 << 8,       0,           -1		 },
 };
 
 /* layout(s) */
-static const float mfact     = 0.5; /* factor of master area size [0.05..0.95] */
-static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const float mfact     = 0.5;	 /* factor of master area size [0.05..0.95] */
+static const int nmaster     = 1;   	 /* number of clients in master area */
+static const int resizehints = 0;   	 /* 1 means respect size hints in tiled resizals */
+#define FORCE_VSPLIT 1 			 /* nrowgrid layout: force two clients to always split vertically */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-/*      { "S",      split },  */
-/*      { "B",      bstack },  */
-        { "T",      tile },    /* first entry is default */
-        { "M",      monocle },
-        { "F",      NULL },    /* no layout function means floating behavior */
+//	{ "S",      split },   /* Fibonacci spiral */
+//	{ "B",      bstack },  /* Master on top, slaves on bottom */
+	{ "T",      tile },    /* first entry is default */
+	{ "M",      monocle },
+	{ "F",      NULL },    /* no layout function means floating behavior */
+//	{ "D",      dwindle }, /* Decreasing in size right and leftward */
+//	{ "[D]",    deck },    /* Master on left, slaves in monocle-like mode on right */
+//	{ "|M|",    centeredmaster },               /* Master in middle, slaves on sides */
+//	{ ">M>",    centeredfloatingmaster },       /* Same but master floats */
+        { "><>",        NULL },                 /* no layout function means floating behavior */
+        { NULL,         NULL },
+
 };
 
 /* key definitions */
