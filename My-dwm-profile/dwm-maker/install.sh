@@ -18,6 +18,10 @@ cat ~/.xsession .xsession > temp
 cat temp > ~/.xsession
 rm -rf temp
 
+cat ~/.bash_profile .bash_profile > temp
+cat temp > ~/.bash_profile
+rm -rf temp
+
 mkdir ~/.dwm
 
 cp scripts/autostart.sh ~/.dwm
