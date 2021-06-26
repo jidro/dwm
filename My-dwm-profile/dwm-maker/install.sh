@@ -22,6 +22,7 @@ cat ~/.bash_profile .bash_profile > temp
 cat temp > ~/.bash_profile
 rm -rf temp
 
+mkdir ~/Wallpapers
 mkdir ~/.dwm
 
 cp scripts/autostart.sh ~/.dwm
