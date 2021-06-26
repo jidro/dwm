@@ -22,16 +22,24 @@ cat ~/.xsession .xsession > temp
 cat temp > ~/.xsession
 rm -rf temp
 
+cat ~/.bash_profile .bash_profile > temp
+cat temp > ~/.bash_profile
+rm -rf temp
+
+mkdir ~/Wallpapers
 mkdir ~/.dwm
 
-cp dmenu ~/.dwm
+cp scripts/autostart.sh ~/.dwm
+cp -r scripts/dwm-autostart/ ~/.dwm
+
+cp -r dmenu ~/.dwm
 cd ~/dwm/dmenu
 sudo make clean install
 
-cp st ~/.dwm
+cp -r st ~/.dwm
 cd ~/.dwm/st
 sudo make clean install
 
-cp dwm ~/.dwm
+cp -r dwm ~/.dwm
 cd ~/.dwm/dwm
 sudo make clean install
