@@ -27,14 +27,14 @@ mkdir ~/.dwm
 cp scripts/autostart.sh ~/.dwm
 cp scripts/dwm-autostart/ ~/.dwm
 
-cp dmenu ~/.dwm
+cp -r dmenu ~/.dwm
 cd ~/dwm/dmenu
 sudo make clean install
 
-cp st ~/.dwm
+cp -r st ~/.dwm
 cd ~/.dwm/st
 sudo make clean install
 
-cp dwm ~/.dwm
+cp -r dwm ~/.dwm
 cd ~/.dwm/dwm
 sudo make clean install
