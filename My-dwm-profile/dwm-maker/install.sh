@@ -1,26 +1,38 @@
 #!/bin/env bash
 
-sudo apt install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+if [ $(ls /bin/apt-get) = /bin/apt-get ];then
+sudo apt install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y 
+elif [ $(ls /bin/pacman) = /bin/pacman ];then
+sudo pacman -S libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+elif [ $(ls /bin/dnf) = /bin/dnf ];then
+sudo dnf install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+elif [ $(ls /bin/yum) = /bin/yum ];then
+sudo yum install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+elif [ $(ls /bin/zypper) = /bin/zypper ];then
+sudo zypper install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+elif [ $(ls /bin/eopkg) = /bin/eopkg ];then
+sudo eopkg install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+elif [ $(ls /bin/xbps-install) = /bin/xbps-install ];then
+sudo xbps-install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+else
+echo "An Unknown Error"
+fi
 
-sudo pacman -S xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
-
-sudo dnf install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
-
-sudo yun install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
-
-sudo zypper install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
-
-sudo eopkg install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
-
-sudo xbps-install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
-
-cat ~/.xsession .xsession > temp
-cat temp > ~/.xsession
+if [ $(ls ~/.xinitrc) = $(ls $HOME/.xinitrc) ];then
+cat ~/.xinitrc .xinitrc > temp
+cat temp > ~/.xinitrc
 rm -rf temp
+else
+echo "exec dwm" > ~/.xinitrc
+fi
 
+if [ $(ls ~/.bash_profile) = $(ls $HOME/.bash_profile) ];then
 cat ~/.bash_profile .bash_profile > temp
 cat temp > ~/.bash_profile
 rm -rf temp
+else
+echo "startx" > ~/.bash_profile
+fi
 
 mkdir ~/Wallpapers
 mkdir ~/.dwm

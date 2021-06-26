@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-while /bin/bash ~/Downloads/all.sh
+while /bin/bash ~/.dwm/dwm-autostart/scripts.sh
 do
        sleep
 done &
