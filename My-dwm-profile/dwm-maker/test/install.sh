@@ -18,12 +18,12 @@ else
 echo "An Unknown Error"
 fi
 
-if [ $(ls ~/.xsession) = $(ls $HOME/.xsession) ];then
-cat ~/.xsession .xsession > temp
-cat temp > ~/.xsession
+if [ $(ls ~/.xinitrc) = $(ls $HOME/.xinitrc) ];then
+cat ~/.xinitrc .xinitrc > temp
+cat temp > ~/.xinitrc
 rm -rf temp
 else
-echo "exec dwm" > ~/.xsession
+echo "exec dwm" > ~/.xinitrc
 fi
 
 if [ $(ls ~/.bash_profile) = $(ls $HOME/.bash_profile) ];then
