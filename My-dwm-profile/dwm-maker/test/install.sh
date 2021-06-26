@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 if [ $(ls /bin/apt-get) = /bin/apt-get ];then
-sudo apt install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+sudo apt install libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y 
 elif [ $(ls /bin/pacman) = /bin/pacman ];then
 sudo pacman -S libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
 elif [ $(ls /bin/dnf) = /bin/dnf ];then
@@ -18,13 +18,21 @@ else
 echo "An Unknown Error"
 fi
 
+if [ $(ls ~/.xsession) = $(ls $HOME/.xsession) ];then
 cat ~/.xsession .xsession > temp
 cat temp > ~/.xsession
 rm -rf temp
+else
+echo "exec dwm" > ~/.xsession
+fi
 
+if [ $(ls ~/.bash_profile) = $(ls $HOME/.bash_profile) ];then
 cat ~/.bash_profile .bash_profile > temp
 cat temp > ~/.bash_profile
 rm -rf temp
+else
+echo "startx" > ~/.bash_profile
+fi
 
 mkdir ~/Wallpapers
 mkdir ~/.dwm
