@@ -10,7 +10,7 @@ print_uptime(){
 }
 
 print_mem(){
-	free -h |grep '^Mem' |awk '{print $7}'
+	free -h |grep -- 2 |awk '{print $7}'
 }
 
 print_cpu(){
