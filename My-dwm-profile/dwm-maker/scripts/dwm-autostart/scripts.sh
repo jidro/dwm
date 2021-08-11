@@ -13,24 +13,12 @@ print_mem(){
 	free -h |grep -- 2 |awk '{print $7}'
 }
 
+print_mem%(){
+	echo $(( 100 - `df -h |grep '^/' |awk '{print $5}' |sed 's/.$//'` ))
+}
+
 print_cpu(){
 	echo $(( 100 - `vmstat |grep -- 3 |awk '{print $15}'` ))
-}
-
-print_netdown(){
-	D1=$(ifconfig $1 |grep 'bytes' |grep 'TX' |awk '{print $5}')
-	D2=$(ifconfig $1 |grep 'bytes' |grep 'TX' |awk '{print $5}')
-	D3=$(awk "BEGIN {print $D2 - $D1}")
-	D=$(awk "BEGIN {print $D3 / 1024 / 1024}")
-	echo "${D}"
-}
-
-print_netup(){
-	U1=$(ifconfig $1 |grep 'bytes' |grep 'RX' |awk '{print $5}')
-	U2=$(ifconfig $1 |grep 'bytes' |grep 'RX' |awk '{print $5}')
-	U3=$(awk "BEGIN {print $U2 - $U1}")
-	U=$(awk "BEGIN {print $U3 / 1024 / 1024}")
-	echo "${U}"
 }
 
 print_bcapacity(){
@@ -48,5 +36,34 @@ print_bstatus(){
 	 exit 0
 	fi
 }
+
+print_netdown(){
+eth0=$1
+
+while true
+do
+ RX_pre=$(cat /proc/net/dev | grep `ip addr | awk '/state UP/ {print $2}' | sed 's/.$//'` | sed 's/:/ /g' | awk '{print $2}')
+ sleep 1
+ RX_next=$(cat /proc/net/dev | grep `ip addr | awk '/state UP/ {print $2}' | sed 's/.$//'` | sed 's/:/ /g' | awk '{print $2}')
+
+ clear
+
+ RX=$((${RX_next}-${RX_pre}))
+
+ if [[ $RX -lt 1024 ]];then
+ RX="${RX}B/s"
+ elif [[ $RX -gt 1048576 ]];then
+ RX=$(echo $RX | awk '{print $1/1048576 "MB/s"}')
+ else
+ RX=$(echo $RX | awk '{print $1/1024 "KB/s"}')
+ fi
+
+ echo -e "$RX"
+
+done
+}
+
+#. "$DIR/netspeed/netdown.sh"
+#. "$DIR/netspeed/netup.sh"
 
 xsetroot -name "$(print_bstatus)$(print_bcapacity) CPU:$(print_cpu)% MEM:$(print_mem) $(print_date) $(print_uptime)"
