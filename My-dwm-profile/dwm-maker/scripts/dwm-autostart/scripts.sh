@@ -66,4 +66,4 @@ done
 #. "$DIR/netspeed/netdown.sh"
 #. "$DIR/netspeed/netup.sh"
 
-xsetroot -name "$(print_bstatus)$(print_bcapacity) CPU:$(print_cpu)% MEM:$(print_mem) $(print_date) $(print_uptime)"
+xsetroot -name "$(print_bstatus)$(print_bcapacity) CPU:$(print_cpu)% MEM:$(print_mem%)% $(print_date)$(print_uptime)"
