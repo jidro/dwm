@@ -3,7 +3,9 @@
 dwm-maker为本人自用的dwm、dmenu、st配置。    
 可在终端下使用install.sh一键安装。    
 安装后dwm、dmenu、st配置文件会放在~/.dwm文件夹下，可自行修改。    
-<p style="display:none;">Ubuntu Forum为本人从Ubuntu论坛中直接下载下来的大神的配置文件。<kbd>[阅读原文](https://forum.ubuntu.org.cn/viewtopic.php?f=95&t=190788)</kbd></p>    
+<p style="display:none;">
+  Ubuntu Forum为本人从Ubuntu论坛中直接下载下来的大神的配置文件。<kbd>[阅读原文](https://forum.ubuntu.org.cn/viewtopic.php?f=95&t=190788)</kbd>
+</p>    
 此为本人学习使用。    
 由此提供对您的网站或计算机造成严重后果的本站概不负责。    
 此为纯属个人学习使用，禁止任何机构及个人将此系统作为商业用途！    
