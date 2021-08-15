@@ -52,10 +52,6 @@ Mkfile.old
 dkms.conf
 .ccls-cache/
 
-dwm
-dmenu
-st
-
 *.rej
 *.orig
 *.save
