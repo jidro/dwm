@@ -1,22 +1,13 @@
 #!/bin/env bash
 
-if [ $(ls /bin/apt-get) = /bin/apt-get ];then
+echo "Downloading software please wait..."
 sudo apt install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-elif [ $(ls /bin/pacman) = /bin/pacman ];then
 sudo pacman -S xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-elif [ $(ls /bin/dnf) = /bin/dnf ];then
 sudo dnf install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-elif [ $(ls /bin/yum) = /bin/yum ];then
 sudo yum install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-elif [ $(ls /bin/zypper) = /bin/zypper ];then
 sudo zypper install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-elif [ $(ls /bin/eopkg) = /bin/eopkg ];then
 sudo eopkg install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-elif [ $(ls /bin/xbps-install) = /bin/xbps-install ];then
 sudo xbps-install xorg libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-else
-echo "An Unknown Error"
-fi
 
 if [ $(ls ~/.xinitrc) = $(ls $HOME/.xinitrc) ];then
 cat ~/.xinitrc .xinitrc > temp && cat temp > ~/.xinitrc && rm -rf temp
