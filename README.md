@@ -4,7 +4,7 @@
 可在终端下使用`./install.sh`一键安装。    
 **注意：** 使用脚本之前需要先使用`chmod +x install.sh`命令。    
 安装后`dwm`、`dmenu`、`st`配置文件会一并放在`~/.dwm`文件夹下，并且会在用户`home`目录下创建一个名为`Wallpapers`的文件夹用来存储壁纸使用，也可安装后在`~/.dwm/autostart.sh`中修改壁纸存放位置，可自行修改。       
-**警告：** 此脚本目前还存有很多问题未被解决，请谨慎使用，愿大神指正修改。
+**警告：** 此脚本目前还存有很多问题未被解决，请谨慎使用，愿大神指正修改。    
 > 此为本人学习使用。    
 由此提供对您的网站或计算机造成严重后果的本站概不负责。    
 此为纯属个人学习使用，禁止任何机构及个人将此系统作为商业用途！    
@@ -18,9 +18,9 @@
 ## English
 `dwm-maker` for my own `DWM`, `DMENU`, `ST` configuration.    
 It can be installed with one click using `./install.sh` from the terminal.    
-**Note:** You need to use the `chmod +x install.sh` command before using the script.
+**Note:** You need to use the `chmod +x install.sh` command before using the script.     
 After installation, the `dwm`, `dmenu`, and `st` configuration files will be placed together in the `~/.dwm` folder, and a folder named `Wallpapers` will be created in the user's `home` directory. To store the wallpaper, you can also modify the wallpaper storage location in `~/.dwm/autostart.sh` after installation, and you can modify it yourself.    
-**Warning:** There are still many unresolved problems in this script, please use it with caution, and hope that the great god can correct and modify it.
+**Warning:** There are still many unresolved problems in this script, please use it with caution, and hope that the great god can correct and modify it.    
 > This is for my learning use.    
 This provides for your website or computer caused serious consequences of the site is not responsible.    
 This system is for personal use only, any organization or individual is prohibited to use this system for commercial purposes!    
