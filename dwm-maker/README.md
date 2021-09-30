@@ -1,4 +1,11 @@
 # My dwm configuration
+
+------
+
+[TOC]
+
+------
+
 ## 中文
 `dwm-maker`为本人自用的`dwm`、`dmenu`、`st`配置。    
 可在终端下使用`./install.sh`一键安装。    
