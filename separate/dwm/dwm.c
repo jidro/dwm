@@ -211,10 +211,9 @@ static void expose(XEvent *e);
 static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
-//static void focusstack(const Arg *arg);
 static void focusstackvis(const Arg *arg);
-static void focusstackhid(const Arg *arg);
-static void focusstack(int inc, int vis);
+static void focusstackhid(const Arg *arg,int inc, int vis);
+static void focusstack(const Arg *arg,int inc, int vis, int hid);
 static Atom getatomprop(Client *c, Atom prop);
 static int getrootptr(int *x, int *y);
 static long getstate(Window w);
@@ -222,7 +221,7 @@ static unsigned int getsystraywidth();
 static int gettextprop(Window w, Atom atom, char *text, unsigned int size);
 static void grabbuttons(Client *c, int focused);
 static void grabkeys(void);
-static void hide(const Arg *arg);
+static void hide(Client *c,const Arg *arg);
 static void incnmaster(const Arg *arg);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
@@ -254,12 +253,22 @@ static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
 static void fullscreen(const Arg *arg);
+static void setgaps(int oh, int ov, int ih, int iv);
+static void incrgaps(const Arg *arg);
+static void incrigaps(const Arg *arg);
+static void incrogaps(const Arg *arg);
+static void incrohgaps(const Arg *arg);
+static void incrovgaps(const Arg *arg);
+static void incrihgaps(const Arg *arg);
+static void incrivgaps(const Arg *arg);
+static void togglegaps(const Arg *arg);
+static void defaultgaps(const Arg *arg);
 static void setlayout(const Arg *arg);
 static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
-static void show(const Arg *arg);
+static void show(Client *c,const Arg *arg);
 static void showwin(Client *c);
 static void showhide(Client *c);
 static void sigchld(int unused);
@@ -317,6 +326,7 @@ static char stext[256];
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh, blw = 0;      /* bar geometry */
+static int enablegaps = 1;   /* enables gaps, used by togglegaps */
 static int lrpad;            /* sum of left and right padding for text */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
@@ -746,6 +756,7 @@ configurenotify(XEvent *e)
 				for (c = m->clients; c; c = c->next)
 					if (c->isfullscreen)
 						resizeclient(c, m->mx, m->my, m->mw, m->mh);
+				XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
 				resizebarwin(m);
 			}
 			focus(NULL);
@@ -1106,26 +1117,24 @@ void
 //focusstack(const Arg *arg)
 focusstackvis(const Arg *arg)
 {
-	focusstack(arg->i, 0);
+//	focusstack(arg->i, 0);
 }
 
 void
-focusstackhid(const Arg *arg)
+focusstackhid(const Arg *arg,int inc, int vis)
 {
-	focusstack(arg->i, 1);
+//	focusstack(arg->i, 1);
 }
 
 void
-focusstack(int inc, int hid)
+focusstack(const Arg *arg,int inc, int vis, int hid)
 {
 	Client *c = NULL, *i;
 
 	if (!selmon->sel && !hid || (selmon->sel->isfullscreen && lockfullscreen))
 		return;
-//	if (arg->i > 0) {
-//		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
-	if (!selmon->clients)
-		return;
+	if (arg->i > 0) {
+		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
 
 	if (inc > 0) {
 		if (selmon->sel)
@@ -1161,8 +1170,9 @@ focusstack(int inc, int hid)
 		if (HIDDEN(c)) {
 			showwin(c);
 			c->mon->hidsel = 1;
-		}
-	}
+        }
+	  }
+    }
 }
 
 Atom
@@ -1291,19 +1301,18 @@ grabkeys(void)
 }
 
 void
-hide(const Arg *arg)
+hide(Client *c,const Arg *arg)
 {
 //	hidewin(selmon->sel);
 	focus(NULL);
 	arrange(selmon);
 }
 
-
-void hidewin(Client *c,const Arg *arg) {
+void 
+hidewin(Client *c,const Arg *arg) {
 	if (!selmon->sel)
 		return;
-//	Client *c = (Client*)selmon->sel;
-	hide(c);
+
 	hiddenWinStack[++hiddenWinStackTop] = c;
 
 	if (!c || HIDDEN(c))
@@ -1324,29 +1333,10 @@ void hidewin(Client *c,const Arg *arg) {
 	XSelectInput(dpy, root, ra.your_event_mask);
 	XSelectInput(dpy, w, ca.your_event_mask);
 	XUngrabServer(dpy);
+
+	focus(c->snext);
+	arrange(c->mon);
 }
-
-/*void 
-hidewin(Client *c) {
-	if (!c || HIDDEN(c))
-		return;
-
-	Window w = c->win;
-	static XWindowAttributes ra, ca;
-
-	// more or less taken directly from blackbox's hide() function
-	XGrabServer(dpy);
-	XGetWindowAttributes(dpy, root, &ra);
-	XGetWindowAttributes(dpy, w, &ca);
-	// prevent UnmapNotify events
-	XSelectInput(dpy, root, ra.your_event_mask & ~SubstructureNotifyMask);
-	XSelectInput(dpy, w, ca.your_event_mask & ~StructureNotifyMask);
-	XUnmapWindow(dpy, w);
-	setclientstate(c, IconicState);
-	XSelectInput(dpy, root, ra.your_event_mask);
-	XSelectInput(dpy, w, ca.your_event_mask);
-	XUngrabServer(dpy);
-}*/
 
 void
 incnmaster(const Arg *arg)
@@ -1892,6 +1882,8 @@ runautostart(void)
 	char *home;
 	struct stat sb;
 
+	system("killall -q dwmblocks;dwmblocks &");
+
 	if ((home = getenv("HOME")) == NULL)
 		/* this is almost impossible */
 		return;
@@ -2123,6 +2115,111 @@ fullscreen(const Arg *arg)
 }
 
 void
+setgaps(int oh, int ov, int ih, int iv)
+{
+	if (oh < 0) oh = 0;
+	if (ov < 0) ov = 0;
+	if (ih < 0) ih = 0;
+	if (iv < 0) iv = 0;
+
+	selmon->gappoh = oh;
+	selmon->gappov = ov;
+	selmon->gappih = ih;
+	selmon->gappiv = iv;
+	arrange(selmon);
+}
+
+void
+togglegaps(const Arg *arg)
+{
+	enablegaps = !enablegaps;
+	arrange(selmon);
+}
+
+void
+defaultgaps(const Arg *arg)
+{
+	setgaps(gappoh, gappov, gappih, gappiv);
+}
+
+void
+incrgaps(const Arg *arg)
+{
+	setgaps(
+		selmon->gappoh + arg->i,
+		selmon->gappov + arg->i,
+		selmon->gappih + arg->i,
+		selmon->gappiv + arg->i
+	);
+}
+
+void
+incrigaps(const Arg *arg)
+{
+	setgaps(
+		selmon->gappoh,
+		selmon->gappov,
+		selmon->gappih + arg->i,
+		selmon->gappiv + arg->i
+	);
+}
+
+void
+incrogaps(const Arg *arg)
+{
+	setgaps(
+		selmon->gappoh + arg->i,
+		selmon->gappov + arg->i,
+		selmon->gappih,
+		selmon->gappiv
+	);
+}
+
+void
+incrohgaps(const Arg *arg)
+{
+	setgaps(
+		selmon->gappoh + arg->i,
+		selmon->gappov,
+		selmon->gappih,
+		selmon->gappiv
+	);
+}
+
+void
+incrovgaps(const Arg *arg)
+{
+	setgaps(
+		selmon->gappoh,
+		selmon->gappov + arg->i,
+		selmon->gappih,
+		selmon->gappiv
+	);
+}
+
+void
+incrihgaps(const Arg *arg)
+{
+	setgaps(
+		selmon->gappoh,
+		selmon->gappov,
+		selmon->gappih + arg->i,
+		selmon->gappiv
+	);
+}
+
+void
+incrivgaps(const Arg *arg)
+{
+	setgaps(
+		selmon->gappoh,
+		selmon->gappov,
+		selmon->gappih,
+		selmon->gappiv + arg->i
+	);
+}
+
+void
 setlayout(const Arg *arg)
 {
 	if (!arg || !arg->v || arg->v != selmon->lt[selmon->sellt])
@@ -2264,8 +2361,15 @@ seturgent(Client *c, int urg)
 }
 
 void
-show(const Arg *arg)
+show(Client *c,const Arg *arg)
 {
+	if (!c || !HIDDEN(c))
+		return;
+
+	XMapWindow(dpy, c->win);
+	setclientstate(c, NormalState);
+	arrange(c->mon);
+
 	if (selmon->hidsel)
 		selmon->hidsel = 0;
 	showwin(selmon->sel);
@@ -2349,11 +2453,11 @@ tagmon(const Arg *arg)
 	sendmon(selmon->sel, dirtomon(arg->i));
 }
 
-/*
 void
 tile(Monitor *m)
 {
-	unsigned int i, n, h, mw, my, ty;
+//	unsigned int i, n, h, mw, my, ty;
+    unsigned int i, n, h, r, oe = enablegaps, ie = enablegaps, mw, my, ty;
 	float mfacts = 0, sfacts = 0;
 	Client *c;
 
@@ -2366,28 +2470,41 @@ tile(Monitor *m)
 	if (n == 0)
 		return;
 
+        if (smartgaps == n) {
+                oe = 0; // outer gaps disabled
+        }
+
 	if (n > m->nmaster)
-		mw = m->nmaster ? m->ww * m->mfact : 0;
+//		mw = m->nmaster ? m->ww * m->mfact : 0;
+        mw = m->nmaster ? (m->ww + m->gappiv*ie) * m->mfact : 0;
 	else
-		mw = m->ww;
-	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+//		mw = m->ww;
+//	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+                mw = m->ww - 2*m->gappov*oe + m->gappiv*ie;
+        for (i = 0, my = ty = m->gappoh*oe, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 		if (i < m->nmaster) {
-			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
-			h = (m->wh - my) * (c->cfact / mfacts);
-			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
+//			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
+//			h = (m->wh - my) * (c->cfact / mfacts);
+//			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
+                        r = MIN(n, m->nmaster) - i;
+                        h = (m->wh - my - m->gappoh*oe - m->gappih*ie * (r - 1)) / r;
+                        resize(c, m->wx + m->gappov*oe, m->wy + my, mw - (2*c->bw) - m->gappiv*ie, h - (2*c->bw), 0);
 			if (my + HEIGHT(c) < m->wh)
 				my += HEIGHT(c);
 			mfacts -= c->cfact;
 		} else {
-			h = (m->wh - ty) / (n - i);
-			h = (m->wh - ty) * (c->cfact / sfacts);
-			resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
+//			h = (m->wh - ty) / (n - i);
+//			h = (m->wh - ty) * (c->cfact / sfacts);
+//			resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
+                        r = n - i;
+                        h = (m->wh - ty - m->gappoh*oe - m->gappih*ie * (r - 1)) / r;
+                        resize(c, m->wx + mw + m->gappov*oe, m->wy + ty, m->ww - mw - (2*c->bw) - 2*m->gappov*oe, h - (2*c->bw), 0);
 			if (ty + HEIGHT(c) < m->wh)
-				ty += HEIGHT(c);
+//				ty += HEIGHT(c);
+                                ty += HEIGHT(c) + m->gappih*ie;
 			sfacts -= c->cfact;
 		}
 }
-*/
 
 void
 togglebar(const Arg *arg)
@@ -2395,6 +2512,7 @@ togglebar(const Arg *arg)
 	selmon->showbar = selmon->pertag->showbars[selmon->pertag->curtag] = !selmon->showbar;
 	updatebarpos(selmon);
 	resizebarwin(selmon);
+	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww, bh);
 	if (showsystray) {
 		XWindowChanges wc;
 		if (!selmon->showbar)
@@ -2422,28 +2540,6 @@ togglefloating(const Arg *arg)
 			selmon->sel->w, selmon->sel->h, 0);
 	arrange(selmon);
 }
-
-// void
-// togglescratch(const Arg *arg)
-// {
-// 	Client *c;
-// 	unsigned int found = 0;
-
-// 	for (c = selmon->clients; c && !(found = c->tags & scratchtag); c = c->next);
-// 	if (found) {
-// 		unsigned int newtagset = selmon->tagset[selmon->seltags] ^ scratchtag;
-// 		if (newtagset) {
-// 			selmon->tagset[selmon->seltags] = newtagset;
-// 			focus(NULL);
-// 			arrange(selmon);
-// 		}
-// 		if (ISVISIBLE(c)) {
-// 			focus(c);
-// 			restack(selmon);
-// 		}
-// 	} else
-// 		spawn(arg);
-// }
 
 void
 togglescratch(const Arg *arg)
@@ -2522,11 +2618,12 @@ toggleview(const Arg *arg)
 	}
 }
 
-void restorewin(const Arg *arg) {
+void 
+restorewin(const Arg *arg) {
 	int i = hiddenWinStackTop;
 	while (i > -1) {
 		if (HIDDEN(hiddenWinStack[i]) && hiddenWinStack[i]->tags == selmon->tagset[selmon->seltags]) {
-			show(hiddenWinStack[i]);
+//			show(hiddenWinStack[i]);
 			focus(hiddenWinStack[i]);
 			restack(selmon);
 			for (int j = i; j < hiddenWinStackTop; ++j) {
