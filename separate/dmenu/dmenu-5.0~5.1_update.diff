@@ -1,0 +1,145 @@
+diff -Naur dmenu-5.0/config.mk dmenu-5.1/config.mk
+--- dmenu-5.0/config.mk	2020-09-03 00:37:07.000000000 +0800
++++ dmenu-5.1/config.mk	2022-02-11 19:31:56.000000000 +0800
+@@ -1,5 +1,5 @@
+ # dmenu version
+-VERSION = 5.0
++VERSION = 5.1
+ 
+ # paths
+ PREFIX = /usr/local
+diff -Naur dmenu-5.0/dmenu.c dmenu-5.1/dmenu.c
+--- dmenu-5.0/dmenu.c	2020-09-03 00:37:07.000000000 +0800
++++ dmenu-5.1/dmenu.c	2022-02-11 19:31:56.000000000 +0800
+@@ -103,13 +103,20 @@
+ }
+ 
+ static char *
+-cistrstr(const char *s, const char *sub)
++cistrstr(const char *h, const char *n)
+ {
+-	size_t len;
++	size_t i;
+ 
+-	for (len = strlen(sub); *s; s++)
+-		if (!strncasecmp(s, sub, len))
+-			return (char *)s;
++	if (!n[0])
++		return (char *)h;
++
++	for (; *h; ++h) {
++		for (i = 0; n[i] && tolower((unsigned char)n[i]) ==
++		            tolower((unsigned char)h[i]); ++i)
++			;
++		if (n[i] == '\0')
++			return (char *)h;
++	}
+ 	return NULL;
+ }
+ 
+@@ -360,9 +367,11 @@
+ 			                  utf8, utf8, win, CurrentTime);
+ 			return;
+ 		case XK_Left:
++		case XK_KP_Left:
+ 			movewordedge(-1);
+ 			goto draw;
+ 		case XK_Right:
++		case XK_KP_Right:
+ 			movewordedge(+1);
+ 			goto draw;
+ 		case XK_Return:
+@@ -400,6 +409,7 @@
+ 			insert(buf, len);
+ 		break;
+ 	case XK_Delete:
++	case XK_KP_Delete:
+ 		if (text[cursor] == '\0')
+ 			return;
+ 		cursor = nextrune(+1);
+@@ -410,6 +420,7 @@
+ 		insert(NULL, nextrune(-1) - cursor);
+ 		break;
+ 	case XK_End:
++	case XK_KP_End:
+ 		if (text[cursor] != '\0') {
+ 			cursor = strlen(text);
+ 			break;
+@@ -429,6 +440,7 @@
+ 		cleanup();
+ 		exit(1);
+ 	case XK_Home:
++	case XK_KP_Home:
+ 		if (sel == matches) {
+ 			cursor = 0;
+ 			break;
+@@ -437,6 +449,7 @@
+ 		calcoffsets();
+ 		break;
+ 	case XK_Left:
++	case XK_KP_Left:
+ 		if (cursor > 0 && (!sel || !sel->left || lines > 0)) {
+ 			cursor = nextrune(-1);
+ 			break;
+@@ -445,18 +458,21 @@
+ 			return;
+ 		/* fallthrough */
+ 	case XK_Up:
++	case XK_KP_Up:
+ 		if (sel && sel->left && (sel = sel->left)->right == curr) {
+ 			curr = prev;
+ 			calcoffsets();
+ 		}
+ 		break;
+ 	case XK_Next:
++	case XK_KP_Next:
+ 		if (!next)
+ 			return;
+ 		sel = curr = next;
+ 		calcoffsets();
+ 		break;
+ 	case XK_Prior:
++	case XK_KP_Prior:
+ 		if (!prev)
+ 			return;
+ 		sel = curr = prev;
+@@ -473,6 +489,7 @@
+ 			sel->out = 1;
+ 		break;
+ 	case XK_Right:
++	case XK_KP_Right:
+ 		if (text[cursor] != '\0') {
+ 			cursor = nextrune(+1);
+ 			break;
+@@ -481,6 +498,7 @@
+ 			return;
+ 		/* fallthrough */
+ 	case XK_Down:
++	case XK_KP_Down:
+ 		if (sel && sel->right && (sel = sel->right) == next) {
+ 			curr = next;
+ 			calcoffsets();
+diff -Naur dmenu-5.0/LICENSE dmenu-5.1/LICENSE
+--- dmenu-5.0/LICENSE	2020-09-03 00:37:07.000000000 +0800
++++ dmenu-5.1/LICENSE	2022-02-11 19:31:56.000000000 +0800
+@@ -8,7 +8,7 @@
+ © 2009 Markus Schnalke <meillo@marmaro.de>
+ © 2009 Evan Gates <evan.gates@gmail.com>
+ © 2010-2012 Connor Lane Smith <cls@lubutu.com>
+-© 2014-2020 Hiltjo Posthuma <hiltjo@codemadness.org>
++© 2014-2022 Hiltjo Posthuma <hiltjo@codemadness.org>
+ © 2015-2019 Quentin Rameau <quinq@fifth.space>
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a
+diff -Naur dmenu-5.0/stest.c dmenu-5.1/stest.c
+--- dmenu-5.0/stest.c	2020-09-03 00:37:07.000000000 +0800
++++ dmenu-5.1/stest.c	2022-02-11 19:31:56.000000000 +0800
+@@ -84,7 +84,7 @@
+ 	if (!argc) {
+ 		/* read list from stdin */
+ 		while ((n = getline(&line, &linesiz, stdin)) > 0) {
+-			if (n && line[n - 1] == '\n')
++			if (line[n - 1] == '\n')
+ 				line[n - 1] = '\0';
+ 			test(line, line);
+ 		}

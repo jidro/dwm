@@ -68,14 +68,21 @@ static const float mfact     = 0.5;  /* factor of master area size [0.05..0.95] 
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 #define FORCE_VSPLIT 1               /* nrowgrid layout: force two clients to always split vertically */
+static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
 static const Layout layouts[] = {
-	/* symbol     arrange function */
-        { "M",      monocle },
-/*      { "S",      split },  */
-        { "F",      NULL },    /* no layout function means floating behavior */
-/*      { "B",      bstack },  */
+        /* symbol     arrange function */
+//      { "S",      split },   /* Fibonacci spiral */
+//      { "B",      bstack },  /* Master on top, slaves on bottom*/
         { "T",      tile },    /* first entry is default */
+        { "M",      monocle },
+        { "F",      NULL },    /* no layout function means floating behavior */
+//      { "D",      dwindle }, /* Decreasing in size right and leftward */
+//      { "[D]",    deck },    /* Master on left, slaves in monocle-like mode on right */
+//      { "|M|",    centeredmaster },               /* Master in middle, slaves on sides */
+//      { ">M>",    centeredfloatingmaster },       /* Same but master floats */
+        { "><>",        NULL },                 /* no layout function means floating behavior */
+        { NULL,         NULL },
 };
 
 /* key definitions */
@@ -95,6 +102,9 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *termcmd[]  = { "st", NULL };
 static const char *layoutmenu_cmd = "layoutmenu.sh";
 
+static const char drun[] = "drun";
+static const char *roficmd[]  = { "rofi", "-show", drun, NULL };
+
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "80x24", NULL };
 
@@ -103,6 +113,7 @@ static const char *screenshotcmd[] = { "flameshot", "gui", NULL };
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
+        { MODKEY,                       XK_r,      spawn,          {.v = roficmd } },
 	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -127,13 +138,13 @@ static Key keys[] = {
         { MODKEY|Mod4Mask,              XK_o,      incrohgaps,     {.i = -1 } },
         { MODKEY|ShiftMask,             XK_y,      incrovgaps,     {.i = +1 } },
         { MODKEY|ShiftMask,             XK_o,      incrovgaps,     {.i = -1 } },
-	{ MODKEY,                       XK_Return, spawm,          {.v = termcmd } },
+	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY|ShiftMask,             XK_f,      fullscreen,     {0} },
+        { MODKEY|ShiftMask,             XK_f,      fullscreen,     {0} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
@@ -161,7 +172,6 @@ static Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 //	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkLtSymbol,          0,              Button3,        layoutmenu,     {0} },
-	{ ClkWinTitle,          0,              Button1,        togglewin,      {0} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
