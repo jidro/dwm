@@ -1743,6 +1743,7 @@ xsetenv(void)
 	setenv("WINDOWID", buf, 1);
 }
 
+/*
 void
 xseticontitle(char *p)
 {
@@ -1755,6 +1756,7 @@ xseticontitle(char *p)
 	XSetTextProperty(xw.dpy, xw.win, &prop, xw.netwmiconname);
 	XFree(prop.value);
 }
+*/
 
 void
 xseticontitle(char *p)

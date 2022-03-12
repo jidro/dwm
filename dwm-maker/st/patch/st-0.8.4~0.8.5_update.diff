@@ -1,0 +1,490 @@
+diff -Naur st-0.8.4/config.def.h st-0.8.5/config.def.h
+--- st-0.8.4/config.def.h	2020-06-19 17:29:45.000000000 +0800
++++ st-0.8.5/config.def.h	2022-01-07 19:41:35.000000000 +0800
+@@ -120,6 +120,8 @@
+ 	/* more colors can be added after 255 to use with DefaultXX */
+ 	"#cccccc",
+ 	"#555555",
++	"gray90", /* default foreground colour */
++	"black", /* default background colour */
+ };
+ 
+ 
+@@ -127,9 +129,9 @@
+  * Default colors (colorname index)
+  * foreground, background, cursor, reverse cursor
+  */
+-unsigned int defaultfg = 7;
+-unsigned int defaultbg = 0;
+-static unsigned int defaultcs = 256;
++unsigned int defaultfg = 258;
++unsigned int defaultbg = 259;
++unsigned int defaultcs = 256;
+ static unsigned int defaultrcs = 257;
+ 
+ /*
+diff -Naur st-0.8.4/config.mk st-0.8.5/config.mk
+--- st-0.8.4/config.mk	2020-06-19 17:29:45.000000000 +0800
++++ st-0.8.5/config.mk	2022-01-07 19:41:35.000000000 +0800
+@@ -1,5 +1,5 @@
+ # st version
+-VERSION = 0.8.4
++VERSION = 0.8.5
+ 
+ # Customize below to fit your system
+ 
+diff -Naur st-0.8.4/FAQ st-0.8.5/FAQ
+--- st-0.8.4/FAQ	2020-06-19 17:29:45.000000000 +0800
++++ st-0.8.5/FAQ	2022-01-07 19:41:35.000000000 +0800
+@@ -29,8 +29,8 @@
+ 
+ ## I would like to have utmp and/or scroll functionality by default
+ 
+-You can add the absolute patch of both programs in your config.h
+-file. You only have to modify the value of utmp and scroll variables.
++You can add the absolute path of both programs in your config.h file. You only
++have to modify the value of utmp and scroll variables.
+ 
+ 
+ ## Why doesn't the Del key work in some programs?
+diff -Naur st-0.8.4/st.c st-0.8.5/st.c
+--- st-0.8.4/st.c	2020-06-19 17:29:45.000000000 +0800
++++ st-0.8.5/st.c	2022-01-07 19:41:35.000000000 +0800
+@@ -186,18 +186,18 @@
+ static void treset(void);
+ static void tscrollup(int, int);
+ static void tscrolldown(int, int);
+-static void tsetattr(int *, int);
+-static void tsetchar(Rune, Glyph *, int, int);
++static void tsetattr(const int *, int);
++static void tsetchar(Rune, const Glyph *, int, int);
+ static void tsetdirt(int, int);
+ static void tsetscroll(int, int);
+ static void tswapscreen(void);
+-static void tsetmode(int, int, int *, int);
++static void tsetmode(int, int, const int *, int);
+ static int twrite(const char *, int, int);
+ static void tfulldirt(void);
+ static void tcontrolcode(uchar );
+ static void tdectest(char );
+ static void tdefutf8(char);
+-static int32_t tdefcolor(int *, int *, int);
++static int32_t tdefcolor(const int *, int *, int);
+ static void tdeftran(char);
+ static void tstrsequence(uchar);
+ 
+@@ -226,10 +226,10 @@
+ static int cmdfd;
+ static pid_t pid;
+ 
+-static uchar utfbyte[UTF_SIZ + 1] = {0x80,    0, 0xC0, 0xE0, 0xF0};
+-static uchar utfmask[UTF_SIZ + 1] = {0xC0, 0x80, 0xE0, 0xF0, 0xF8};
+-static Rune utfmin[UTF_SIZ + 1] = {       0,    0,  0x80,  0x800,  0x10000};
+-static Rune utfmax[UTF_SIZ + 1] = {0x10FFFF, 0x7F, 0x7FF, 0xFFFF, 0x10FFFF};
++static const uchar utfbyte[UTF_SIZ + 1] = {0x80,    0, 0xC0, 0xE0, 0xF0};
++static const uchar utfmask[UTF_SIZ + 1] = {0xC0, 0x80, 0xE0, 0xF0, 0xF8};
++static const Rune utfmin[UTF_SIZ + 1] = {       0,    0,  0x80,  0x800,  0x10000};
++static const Rune utfmax[UTF_SIZ + 1] = {0x10FFFF, 0x7F, 0x7FF, 0xFFFF, 0x10FFFF};
+ 
+ ssize_t
+ xwrite(int fd, const char *s, size_t len)
+@@ -269,12 +269,14 @@
+ }
+ 
+ char *
+-xstrdup(char *s)
++xstrdup(const char *s)
+ {
+-	if ((s = strdup(s)) == NULL)
++	char *p;
++
++	if ((p = strdup(s)) == NULL)
+ 		die("strdup: %s\n", strerror(errno));
+ 
+-	return s;
++	return p;
+ }
+ 
+ size_t
+@@ -518,7 +520,7 @@
+ {
+ 	int newx, newy, xt, yt;
+ 	int delim, prevdelim;
+-	Glyph *gp, *prevgp;
++	const Glyph *gp, *prevgp;
+ 
+ 	switch (sel.snap) {
+ 	case SNAP_WORD:
+@@ -591,7 +593,7 @@
+ {
+ 	char *str, *ptr;
+ 	int y, bufsize, lastx, linelen;
+-	Glyph *gp, *last;
++	const Glyph *gp, *last;
+ 
+ 	if (sel.ob.x == -1)
+ 		return NULL;
+@@ -758,7 +760,7 @@
+ }
+ 
+ int
+-ttynew(char *line, char *cmd, char *out, char **args)
++ttynew(const char *line, char *cmd, const char *out, char **args)
+ {
+ 	int m, s;
+ 
+@@ -791,14 +793,15 @@
+ 		break;
+ 	case 0:
+ 		close(iofd);
++		close(m);
+ 		setsid(); /* create a new process group */
+ 		dup2(s, 0);
+ 		dup2(s, 1);
+ 		dup2(s, 2);
+ 		if (ioctl(s, TIOCSCTTY, NULL) < 0)
+ 			die("ioctl TIOCSCTTY failed: %s\n", strerror(errno));
+-		close(s);
+-		close(m);
++		if (s > 2)
++			close(s);
+ #ifdef __OpenBSD__
+ 		if (pledge("stdio getpw proc exec", NULL) == -1)
+ 			die("pledge\n");
+@@ -1186,9 +1189,9 @@
+ }
+ 
+ void
+-tsetchar(Rune u, Glyph *attr, int x, int y)
++tsetchar(Rune u, const Glyph *attr, int x, int y)
+ {
+-	static char *vt100_0[62] = { /* 0x41 - 0x7e */
++	static const char *vt100_0[62] = { /* 0x41 - 0x7e */
+ 		"↑", "↓", "→", "←", "█", "▚", "☃", /* A - G */
+ 		0, 0, 0, 0, 0, 0, 0, 0, /* H - O */
+ 		0, 0, 0, 0, 0, 0, 0, 0, /* P - W */
+@@ -1300,7 +1303,7 @@
+ }
+ 
+ int32_t
+-tdefcolor(int *attr, int *npar, int l)
++tdefcolor(const int *attr, int *npar, int l)
+ {
+ 	int32_t idx = -1;
+ 	uint r, g, b;
+@@ -1350,7 +1353,7 @@
+ }
+ 
+ void
+-tsetattr(int *attr, int l)
++tsetattr(const int *attr, int l)
+ {
+ 	int i;
+ 	int32_t idx;
+@@ -1468,9 +1471,9 @@
+ }
+ 
+ void
+-tsetmode(int priv, int set, int *args, int narg)
++tsetmode(int priv, int set, const int *args, int narg)
+ {
+-	int alt, *lim;
++	int alt; const int *lim;
+ 
+ 	for (lim = args + narg; args < lim; ++args) {
+ 		if (priv) {
+@@ -1840,6 +1843,42 @@
+ }
+ 
+ void
++osc4_color_response(int num)
++{
++	int n;
++	char buf[32];
++	unsigned char r, g, b;
++
++	if (xgetcolor(num, &r, &g, &b)) {
++		fprintf(stderr, "erresc: failed to fetch osc4 color %d\n", num);
++		return;
++	}
++
++	n = snprintf(buf, sizeof buf, "\033]4;%d;rgb:%02x%02x/%02x%02x/%02x%02x\007",
++		     num, r, r, g, g, b, b);
++
++	ttywrite(buf, n, 1);
++}
++
++void
++osc_color_response(int index, int num)
++{
++	int n;
++	char buf[32];
++	unsigned char r, g, b;
++
++	if (xgetcolor(index, &r, &g, &b)) {
++		fprintf(stderr, "erresc: failed to fetch osc color %d\n", index);
++		return;
++	}
++
++	n = snprintf(buf, sizeof buf, "\033]%d;rgb:%02x%02x/%02x%02x/%02x%02x\007",
++		     num, r, r, g, g, b, b);
++
++	ttywrite(buf, n, 1);
++}
++
++void
+ strhandle(void)
+ {
+ 	char *p = NULL, *dec;
+@@ -1853,7 +1892,15 @@
+ 	case ']': /* OSC -- Operating System Command */
+ 		switch (par) {
+ 		case 0:
++			if (narg > 1) {
++				xsettitle(strescseq.args[1]);
++				xseticontitle(strescseq.args[1]);
++			}
++			return;
+ 		case 1:
++			if (narg > 1)
++				xseticontitle(strescseq.args[1]);
++			return;
+ 		case 2:
+ 			if (narg > 1)
+ 				xsettitle(strescseq.args[1]);
+@@ -1869,14 +1916,56 @@
+ 				}
+ 			}
+ 			return;
++		case 10:
++			if (narg < 2)
++				break;
++
++			p = strescseq.args[1];
++
++			if (!strcmp(p, "?"))
++				osc_color_response(defaultfg, 10);
++			else if (xsetcolorname(defaultfg, p))
++				fprintf(stderr, "erresc: invalid foreground color: %s\n", p);
++			else
++				redraw();
++			return;
++		case 11:
++			if (narg < 2)
++				break;
++
++			p = strescseq.args[1];
++
++			if (!strcmp(p, "?"))
++				osc_color_response(defaultbg, 11);
++			else if (xsetcolorname(defaultbg, p))
++				fprintf(stderr, "erresc: invalid background color: %s\n", p);
++			else
++				redraw();
++			return;
++		case 12:
++			if (narg < 2)
++				break;
++
++			p = strescseq.args[1];
++
++			if (!strcmp(p, "?"))
++				osc_color_response(defaultcs, 12);
++			else if (xsetcolorname(defaultcs, p))
++				fprintf(stderr, "erresc: invalid cursor color: %s\n", p);
++			else
++				redraw();
++			return;
+ 		case 4: /* color set */
+ 			if (narg < 3)
+ 				break;
+ 			p = strescseq.args[2];
+ 			/* FALLTHROUGH */
+-		case 104: /* color reset, here p = NULL */
++		case 104: /* color reset */
+ 			j = (narg > 1) ? atoi(strescseq.args[1]) : -1;
+-			if (xsetcolorname(j, p)) {
++
++			if (p && !strcmp(p, "?"))
++				osc4_color_response(j);
++			else if (xsetcolorname(j, p)) {
+ 				if (par == 104 && narg <= 1)
+ 					return; /* color reset without parameter */
+ 				fprintf(stderr, "erresc: invalid color j=%d, p=%s\n",
+@@ -2012,7 +2101,7 @@
+ tdumpline(int n)
+ {
+ 	char buf[UTF_SIZ];
+-	Glyph *bp, *end;
++	const Glyph *bp, *end;
+ 
+ 	bp = &term.line[n][0];
+ 	end = &bp[MIN(tlinelen(n), term.col) - 1];
+@@ -2418,6 +2507,10 @@
+ 	if (width == 2) {
+ 		gp->mode |= ATTR_WIDE;
+ 		if (term.c.x+1 < term.col) {
++			if (gp[1].mode == ATTR_WIDE && term.c.x+2 < term.col) {
++				gp[2].u = ' ';
++				gp[2].mode &= ~ATTR_WDUMMY;
++			}
+ 			gp[1].u = '\0';
+ 			gp[1].mode = ATTR_WDUMMY;
+ 		}
+diff -Naur st-0.8.4/st.h st-0.8.5/st.h
+--- st-0.8.4/st.h	2020-06-19 17:29:45.000000000 +0800
++++ st-0.8.5/st.h	2022-01-07 19:41:35.000000000 +0800
+@@ -91,7 +91,7 @@
+ void tresize(int, int);
+ void tsetdirtattr(int);
+ void ttyhangup(void);
+-int ttynew(char *, char *, char *, char **);
++int ttynew(const char *, char *, const char *, char **);
+ size_t ttyread(void);
+ void ttyresize(int, int);
+ void ttywrite(const char *, size_t, int);
+@@ -109,7 +109,9 @@
+ 
+ void *xmalloc(size_t);
+ void *xrealloc(void *, size_t);
+-char *xstrdup(char *);
++char *xstrdup(const char *);
++
++int xgetcolor(int x, unsigned char *r, unsigned char *g, unsigned char *b);
+ 
+ /* config.h globals */
+ extern char *utmp;
+@@ -123,3 +125,4 @@
+ extern unsigned int tabspaces;
+ extern unsigned int defaultfg;
+ extern unsigned int defaultbg;
++extern unsigned int defaultcs;
+diff -Naur st-0.8.4/win.h st-0.8.5/win.h
+--- st-0.8.4/win.h	2020-06-19 17:29:45.000000000 +0800
++++ st-0.8.5/win.h	2022-01-07 19:41:35.000000000 +0800
+@@ -30,6 +30,7 @@
+ void xfinishdraw(void);
+ void xloadcols(void);
+ int xsetcolorname(int, const char *);
++void xseticontitle(char *);
+ void xsettitle(char *);
+ int xsetcursor(int);
+ void xsetmode(int, unsigned int);
+diff -Naur st-0.8.4/x.c st-0.8.5/x.c
+--- st-0.8.4/x.c	2020-06-19 17:29:45.000000000 +0800
++++ st-0.8.5/x.c	2022-01-07 19:41:35.000000000 +0800
+@@ -48,7 +48,7 @@
+ /* X modifiers */
+ #define XK_ANY_MOD    UINT_MAX
+ #define XK_NO_MOD     0
+-#define XK_SWITCH_MOD (1<<13)
++#define XK_SWITCH_MOD (1<<13|1<<14)
+ 
+ /* function definitions used in config.h */
+ static void clipcopy(const Arg *);
+@@ -93,7 +93,7 @@
+ 	Window win;
+ 	Drawable buf;
+ 	GlyphFontSpec *specbuf; /* font spec buffer used for rendering */
+-	Atom xembed, wmdeletewin, netwmname, netwmpid;
++	Atom xembed, wmdeletewin, netwmname, netwmiconname, netwmpid;
+ 	struct {
+ 		XIM xim;
+ 		XIC xic;
+@@ -156,7 +156,7 @@
+ static void xhints(void);
+ static int xloadcolor(int, const char *, Color *);
+ static int xloadfont(Font *, FcPattern *);
+-static void xloadfonts(char *, double);
++static void xloadfonts(const char *, double);
+ static void xunloadfont(Font *);
+ static void xunloadfonts(void);
+ static void xsetenv(void);
+@@ -387,7 +387,9 @@
+ 			button = 3;
+ 		} else {
+ 			button -= Button1;
+-			if (button >= 3)
++			if (button >= 7)
++				button += 128 - 7;
++			else if (button >= 3)
+ 				button += 64 - 3;
+ 		}
+ 		if (e->xbutton.type == ButtonPress) {
+@@ -798,6 +800,19 @@
+ }
+ 
+ int
++xgetcolor(int x, unsigned char *r, unsigned char *g, unsigned char *b)
++{
++	if (!BETWEEN(x, 0, dc.collen))
++		return 1;
++
++	*r = dc.col[x].color.red >> 8;
++	*g = dc.col[x].color.green >> 8;
++	*b = dc.col[x].color.blue >> 8;
++
++	return 0;
++}
++
++int
+ xsetcolorname(int x, const char *name)
+ {
+ 	Color ncolor;
+@@ -950,7 +965,7 @@
+ }
+ 
+ void
+-xloadfonts(char *fontstr, double fontsize)
++xloadfonts(const char *fontstr, double fontsize)
+ {
+ 	FcPattern *pattern;
+ 	double fontval;
+@@ -958,7 +973,7 @@
+ 	if (fontstr[0] == '-')
+ 		pattern = XftXlfdParse(fontstr, False, False);
+ 	else
+-		pattern = FcNameParse((FcChar8 *)fontstr);
++		pattern = FcNameParse((const FcChar8 *)fontstr);
+ 
+ 	if (!pattern)
+ 		die("can't open font %s\n", fontstr);
+@@ -1186,6 +1201,7 @@
+ 	xw.xembed = XInternAtom(xw.dpy, "_XEMBED", False);
+ 	xw.wmdeletewin = XInternAtom(xw.dpy, "WM_DELETE_WINDOW", False);
+ 	xw.netwmname = XInternAtom(xw.dpy, "_NET_WM_NAME", False);
++	xw.netwmiconname = XInternAtom(xw.dpy, "_NET_WM_ICON_NAME", False);
+ 	XSetWMProtocols(xw.dpy, xw.win, &xw.wmdeletewin, 1);
+ 
+ 	xw.netwmpid = XInternAtom(xw.dpy, "_NET_WM_PID", False);
+@@ -1580,13 +1596,28 @@
+ }
+ 
+ void
++xseticontitle(char *p)
++{
++	XTextProperty prop;
++	DEFAULT(p, opt_title);
++
++	if (Xutf8TextListToTextProperty(xw.dpy, &p, 1, XUTF8StringStyle,
++	                                &prop) != Success)
++		return;
++	XSetWMIconName(xw.dpy, xw.win, &prop);
++	XSetTextProperty(xw.dpy, xw.win, &prop, xw.netwmiconname);
++	XFree(prop.value);
++}
++
++void
+ xsettitle(char *p)
+ {
+ 	XTextProperty prop;
+ 	DEFAULT(p, opt_title);
+ 
+-	Xutf8TextListToTextProperty(xw.dpy, &p, 1, XUTF8StringStyle,
+-			&prop);
++	if (Xutf8TextListToTextProperty(xw.dpy, &p, 1, XUTF8StringStyle,
++	                                &prop) != Success)
++		return;
+ 	XSetWMName(xw.dpy, xw.win, &prop);
+ 	XSetTextProperty(xw.dpy, xw.win, &prop, xw.netwmname);
+ 	XFree(prop.value);

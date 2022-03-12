@@ -2022,8 +2022,8 @@ strhandle(void)
 			p = strescseq.args[1];
 
 			if (!strcmp(p, "?"))
-				osc_color_response(defaultcs, 12);
-			else if (xsetcolorname(defaultcs, p))
+				osc_color_response(defaultbg, 12);
+			else if (xsetcolorname(defaultbg, p))
 				fprintf(stderr, "erresc: invalid cursor color: %s\n", p);
 			else
 				redraw();
