@@ -99,32 +99,45 @@ float alpha = 0.8;
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
 	/* 8 normal colors */
-	"black",
-	"red3",
-	"green3",
-	"yellow3",
-	"blue2",
-	"magenta3",
-	"cyan3",
-	"gray90",
+	[0] = "#282a2e", /* black   */
+	[1] = "#b11717", /* red     */
+	[2] = "#18b117", /* green   */
+	[3] = "#ffc004", /* yellow  */
+	[4] = "#1817b1", /* blue    */
+	[5] = "#ec0047", /* magenta */
+	[6] = "#29a7e7", /* cyan    */
+	[7] = "#f1f1f1", /* white   */
 
 	/* 8 bright colors */
-	"gray50",
-	"red",
-	"green",
-	"yellow",
-	"#5c5cff",
-	"magenta",
-	"cyan",
-	"white",
+	[8]  = "#373b41", /* black   */
+	[9]  = "#ff5353", /* red     */
+	[10] = "#00cd00", /* green   */
+	[11] = "#f0c674", /* yellow  */
+	[12] = "#1e90ff", /* blue    */
+	[13] = "#6c71c4", /* magenta */
+	[14] = "#93a1a1", /* cyan    */
+	[15] = "#c5c8c6", /* white   */
 
-	[255] = 0,
+        /* special colors */
+        [256] = "#252525", /* background */
+        [257] = "#00ff00", /* foreground */
+		
+//	[255] = 0,
 
 	/* more colors can be added after 255 to use with DefaultXX */
+	"#00FF00", /* default foreground colour */
+	"#252525", /* default background colour */
+	"#080808",
+	"#3d3d3d",
+	"#000000",
+	"#166413",
+	"#A9CBFF",
+	"#FCE4E3",
+	"#FAAD1A",
 	"#cccccc",
 	"#555555",
-	"gray90", /* default foreground colour */
-	"black", /* default background colour */
+	"gray90", /* original default foreground colour */
+	"black", /* original default background colour */
 };
 
 
@@ -134,10 +147,21 @@ static const char *colorname[] = {
  */
 unsigned int defaultfg = 258;
 unsigned int defaultbg = 259;
-unsigned int defaultcs = 256;
+unsigned int defaultcs = 257;
 static unsigned int defaultrcs = 257;
 
 /*
+ * Colors used, when the specific fg == defaultfg. So in reverse mode this
+ * will reverse too. Another logic would only make the simple feature too
+ * complex.
+ */
+/*
+unsigned int defaultitalic = 7;
+unsigned int defaultunderline = 7;
+ * Default shape of cursor
+// * 2: Block ("█")
+// * 4: Underline ("_")
+// * 6: Bar ("|")
  * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h4-Functions-using-CSI-_-ordered-by-the-final-character-lparen-s-rparen:CSI-Ps-SP-q.1D81
  * Default style of cursor
  * 0: blinking block
@@ -149,7 +173,7 @@ static unsigned int defaultrcs = 257;
  * 6: steady bar ("|")
  * 7: Snowman ("☃")
  */
-static unsigned int cursorstyle = 1;
+static unsigned int cursorshape = 1;
 
 /*
  * Default columns and rows numbers
