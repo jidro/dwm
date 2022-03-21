@@ -7,7 +7,10 @@ done &
 
 #/bin/bash ~/Downloads/all.sh &
 
-compton &
+#volumeicon &
+
+#compton &
+#picom -CGb &
 
 #/bin/bash ~/.dwm/dwm-autostart/wallpapers.sh &
 while true; do
