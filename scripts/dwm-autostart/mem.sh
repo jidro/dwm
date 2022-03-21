@@ -1,2 +1,2 @@
 #!/bin/sh
-free -h |grep -- 1 |awk '{print $7}'
+echo $(( 100 - `df -h |grep '/$' |awk '{print $5}' |sed 's/.$//'` ))
