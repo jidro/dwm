@@ -14,7 +14,7 @@ print_mem(){
 }
 
 print_mem%(){
-	echo $(( 100 - `df -h |grep '^/' |awk '{print $5}' |sed 's/.$//'` ))
+	echo $(( 100 - `df -h |grep '/$' |awk '{print $5}' |sed 's/.$//'` ))
 }
 
 print_cpu(){
