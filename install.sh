@@ -1,13 +1,13 @@
 #!/bin/env bash
 
 echo "Downloading software please wait..."
-sudo apt install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-sudo pacman -S xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-sudo dnf install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-sudo yum install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-sudo zypper install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-sudo eopkg install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
-sudo xbps-install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y &>/dev/null
+sudo apt install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower -y
+sudo pacman -S xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower
+sudo dnf install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower
+sudo yum install xorg-x11-server-Xorg xorg-x11-xinit xorg-x11-xinit-session libX11-devel libXft-devel libXinerama-devel make cmake upower gcc dejavu-sans-fonts
+sudo zypper install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower
+sudo eopkg install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower
+sudo xbps-install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower
 
 if [ $(ls ~/.xinitrc) = $(ls $HOME/.xinitrc) ];then
 cat ~/.xinitrc .xinitrc > temp && cat temp > ~/.xinitrc && rm -rf temp
