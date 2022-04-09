@@ -28,6 +28,8 @@ mkdir ~/.dwm
 cp scripts/autostart.sh ~/.dwm
 cp -r scripts/dwm-autostart/ ~/.dwm
 
+sudo touch *
+
 cp -r dmenu ~/.dwm
 cd ~/dwm/dmenu
 sudo make clean install
