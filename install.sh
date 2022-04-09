@@ -6,7 +6,8 @@ sudo pacman -S xorg xorg-server xorg-xinit xorg-xsetroot libx11 libxft libxinera
 sudo dnf install xorg-x11-server-Xorg xorg-x11-xinit xorg-x11-xinit-session libX11-devel libXft-devel libXinerama-devel make cmake upower gcc dejavu-sans-fonts xsetroot g++ picom feh acpi -y
 sudo yum install xorg-x11-server-Xorg xorg-x11-xinit xorg-x11-xinit-session libX11-devel libXft-devel libXinerama-devel make cmake upower gcc dejavu-sans-fonts -y
 sudo zypper install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower
-sudo eopkg install xorg-server xorg-server-devel xinit libx11-devel libxft-devel libxinerama-devel make cmake feh acpi upower gcc g++dejavu-fonts-ttf xsetroot picom pkg-config
+sudo eopkg install xorg-server xorg-server-devel xinit libx11-devel libxft-devel libxinerama-devel make cmake feh acpi upower gcc g++dejavu-fonts-ttf xsetroot picom pkg-config automake autoconf libtool
+sudo eopkg install -c system.devel
 sudo xbps-install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower
 
 if [ $(ls ~/.xinitrc) = $(ls $HOME/.xinitrc) ];then
