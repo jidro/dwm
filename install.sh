@@ -9,7 +9,7 @@ sudo zypper install xorg-x11 xorg-x11-devel xorg-x11-server xinit libX11-devel l
 #sudo pkg install git xorg xorg-server xinit libX11 libXft libXinerama cmake gccmakedep gmake feh acpi_call acpica-tools upower xsetroot picom rofi autoconf dejavu wqy-fonts #Currently, FreeBSD has not been successfully installed and is temporarily sealed.
 sudo eopkg install xorg-server xorg-server-devel xinit libx11-devel libxft-devel libxinerama-devel make cmake feh acpi upower gcc g++ dejavu-fonts-ttf xsetroot picom pkg-config automake autoconf libtool
 sudo eopkg install -c system.devel
-sudo xbps-install xorg xorg-server xorg-xinit libx11-dev libxft-dev libxinerama-dev make cmake feh acpi cruft-common upower
+sudo xbps-install xorg xorg-server xorg-server-devel xinit libX11-devel libXft-devel libXinerama libXinerama-devel make cmake feh acpi upower gcc xsetroot picom pkg-config rofi automake autoconf libtool dejavu-fonts-ttf wqy-microhei git -y
 
 if [ $(ls ~/.xinitrc) = $(ls $HOME/.xinitrc) ];then
 cat ~/.xinitrc .xinitrc > temp && cat temp > ~/.xinitrc && rm -rf temp
