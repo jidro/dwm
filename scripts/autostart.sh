@@ -10,7 +10,7 @@ done &
 #volumeicon &
 
 #compton &
-#picom -CGb &
+#picom --experimental-backends -CGb &
 
 #/bin/bash ~/.dwm/dwm-autostart/wallpapers.sh &
 while true; do
