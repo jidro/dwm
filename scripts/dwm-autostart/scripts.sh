@@ -9,12 +9,13 @@ print_uptime(){
 	uptime | sed 's/.*,//'
 }
 
-print_mem(){
-	free -h |grep -- 2 |awk '{print $7}'
+print_ram(){
+	#free -h |grep -- 2 |awk '{print $7}'
+	free -th |awk '{print $4}' |sed -n 4p
 }
 
 print_mem%(){
-	echo $(( 100 - `df -h |grep '/$' |awk '{print $5}' |sed 's/.$//'` ))
+	echo $(( 100 - `df -h |grep ' /$' |awk '{print $5}' |sed 's/.$//'` ))
 }
 
 print_cpu(){
